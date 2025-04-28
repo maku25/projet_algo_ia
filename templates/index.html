@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détection de sentiment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Analyse de texte</h1>
+
+    <textarea id="textInput" placeholder="Entrez votre texte ici..."></textarea><br>
+    <button onclick="sendText()">Analyser</button>
+
+    <div id="result"></div>
+
+    <script>
+        function sendText() {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                document.getElementById('result').innerText = "Veuillez entrer un texte.";
+                return;
+            }
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = "Résultat : " + data.prediction;
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = "Erreur lors de l'analyse.";
+                console.error('Erreur:', error);
+            });
+        }
+    </script>
+</body>
+</html>
